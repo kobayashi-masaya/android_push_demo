@@ -1,32 +1,30 @@
 # 【Android】プッシュ通知を組み込もう！
-*2016/09/27作成（2017/10/13更新）*
+*2016/09/27作成（2018/10/13更新）*
 
 <center><img src="readme-img/OverView.png" alt="画像1" width="700px"></center>
 
 ## 概要
 
-* [ニフティクラウドmobile backend](http://mb.cloud.nifty.com/)のプッシュ通知機能は、Googleが提供しているFirebase Cloud Messaging（以下、FCM）と連携することで、通知の配信を行っています
-
-※ FCMはGCM(Google Cloud Messaging)の新バージョンです。
-既にGCMにてプロジェクトの作成・GCMの有効化設定を終えている場合は、継続してご利用いただくことが可能です。
+* [ニフクラ mobile backend](https://mbaas.nifcloud.com/)のプッシュ通知機能は、Googleが提供しているFirebase Cloud Messaging（以下、FCM）と連携することで、通知の配信を行っています
 
 * Androidアプリでプッシュ通知を受信するまでの設定は以下のような流れとなっています
- * FCMプロジェクトの作成とAPIキーの取得
- * ニフティクラウド mobile backendでの設定
- * アプリでの設定
-* 詳しい設定内容は[プッシュ通知（Android）](http://mb.cloud.nifty.com/doc/current/push/basic_usage_android.html)をご参照ください
+   * Firebaseプロジェクトの作成とAPIキーの取得 ※APIキーの取得については2019年3月以降廃止予定
+   * google-service.jsonとFirebase秘密鍵の設定
+   * ニフクラ  mobile backendでの設定
+   * アプリでの設定
+* 詳しい設定内容は[プッシュ通知（Android）](https://mbaas.nifcloud.com/doc/current/push/basic_usage_android.html)をご参照ください
 
-## ニフティクラウドmobile backendって何？？
+## ニフクラ mobile backendって何？？
 スマートフォンアプリのバックエンド機能（プッシュ通知・データストア・会員管理・ファイルストア・SNS連携・位置情報検索・スクリプト）が**開発不要**、しかも基本**無料**(注1)で使えるクラウドサービス！今回はデータストアを体験します
 
-注1：詳しくは[こちら](http://mb.cloud.nifty.com/price.htm)をご覧ください
+注1：詳しくは[こちら](https://mbaas.nifcloud.com/price.htm)をご覧ください
 
 <center><img src="readme-img/SdkTypes.png" alt="画像2" width="700px"></center>
 
 
 ## 動作環境
 * Windows 7 Professional
-* Android Studio v2.2.3
+* Android Studio v3.1
 * Android ver 4x,5x,6x,7x
 
 ※上記内容で動作確認をしています
@@ -36,19 +34,31 @@
 ## 手順
 ### 0.プッシュ通知機能を使うための準備
 
-ニフティクラウド mobile backendと連携させるためのAPIキーを取得する必要があります。 以下のドキュメントを参考に、FCMプロジェクトの作成とAPIキーの取得を行ってください。
+ FCM対応したプッシュ通知を送信する場合、Firebaseプロジェクトを作成していただいたあと、下記設定を行っていただく必要があります。
+ 
+ * APIキーの取得※2019年3月以降廃止
+ * google-service.jsonをアプリに配置
+ * Firebaseプロジェクトの秘密鍵をmobile backendにアップロード
+ 
+ 以下のドキュメントを参考に、設定を行ってください。
+ 
+ ▼Firebaseプロジェクトの作成とAPIキーの取得▼  
+  https://mbaas.nifcloud.com/doc/current/tutorial/push_setup_android.html  
+  ※2019年3月までの間は、Firebaseプロジェクトのサーバーキーもmobile backendにて設定していただく必要があります。  
+ 
+ ▼ google-service.jsonとFirebase秘密鍵の設定方法について▼  
+ https://mbaas.nifcloud.com/doc/current/common/push_setup_fcm_json.html  
+ ※ [手順5.google-service.jsonの配置](https://github.com/NIFCloud-mbaas/android_push_demo#5-google-servicejson%E3%81%AE%E9%85%8D%E7%BD%AE) もご参考ください。   
 
-__▼ mobile backendとFCMの連携に必要な設定 ▼__<br>http://mb.cloud.nifty.com/doc/current/tutorial/push_setup_android.html
+### 1. ニフクラ  mobile backend の準備
 
-### 1. ニフティクラウド mobile backend の準備
-
-* 上記リンクから会員登録（無料）をします
+* [本リンク](https://mbaas.nifcloud.com/signup.htm)から会員登録（無料）をします
 * 登録後、ログインをすると下図のように「アプリの新規作成」画面が出ますので、アプリを作成します
 
 <center><img src="readme-img/mBassNewProject.png" alt="画像3" width="600px"></center>
 
 * アプリ作成されると下図のような画面になります
-* この２種類のAPIキー（アプリケーションキーとクライアントキー）は先ほどインポートしたAndroidStudioで作成するAndroidアプリにニフティクラウドmobile backendの紐付けるため、あとで使います
+* この２種類のAPIキー（アプリケーションキーとクライアントキー）は先ほどインポートしたAndroidStudioで作成するAndroidアプリにニフクラ mobile backendの紐付けるため、あとで使います
 
 <center><img src="readme-img/mBassAPIkey.png" alt="画像4" width="600px"></center>
 
@@ -60,13 +70,14 @@ __▼ mobile backendとFCMの連携に必要な設定 ▼__<br>http://mb.cloud.n
 
 * アプリ設定を開いてプッシュ通知の設定をします
    * 「プッシュ通知の許可」で「許可する」選択、「保存する」をクリックします
-   * 「Androidプッシュ通知」の「APIキー」には、FCMでプロジェクト作成時に発行された「サーバーキー」を記入し、「保存する」をクリックします
+    * 「Androidプッシュ通知」の「APIキー」には、Firebaseでプロジェクト作成時に発行された「サーバーキー」を記入し、「保存する」をクリックします　※こちらの手順は2019年3月以降廃止予定です
+    * 「FCMプッシュ通知」の「FCMプッシュ通知設定ファイルの選択」というボタンをクリックして、 FirebaseからダウンロードしたFirebaseの秘密鍵jsonファイルをアップロードします
 
-<center><img src="readme-img/mBassPushEnv.png" alt="画像6" width="600px"></center>
+<center><img src="readme-img/mBassPushEnv.png" alt="画像6" width="800px"></center>
 
 ### 2. GitHub からサンプルプロジェクトのダウンロード
 
-* プロジェクトの [Github ページ](https://github.com/NIFTYCloud-mbaas/android_push_demo)から「 Clone or download 」＞「 Download ZIP 」をクリックします
+* プロジェクトの [Github ページ](https://github.com/NIFCloud-mbaas/android_push_demo)から「 Clone or download 」＞「 Download ZIP 」をクリックします
 * プロジェクトを解凍します
 
 ### 3. AndroidStudio でアプリを起動
@@ -84,23 +95,25 @@ __▼ mobile backendとFCMの連携に必要な設定 ▼__<br>http://mb.cloud.n
 ### 4. APIキーの設定
 
 * `MainActivity.java`を編集します
-* 先程[ニフティクラウドmobile backend](http://mb.cloud.nifty.com/)のダッシュボード上で確認したAPIキーを貼り付けます
+* 先程[ニフクラ mobile backend](https://mbaas.nifcloud.com/)のダッシュボード上で確認したAPIキーを貼り付けます
 
 <center><img src="readme-img/AndroidAPIkey.png" alt="画像9" width="600px"></center>
 
 * それぞれ`YOUR_APPLICATION_KEY`と`YOUR_CLIENT_KEY`の部分を書き換えます
  * このとき、ダブルクォーテーション（`"`）を消さないように注意してください！
 
-### 5. AndroidのSender IDキーの設定
+### 5. google-service.jsonの配置
 
-* `MainActivity.java`を編集します
+* Firebaseから発行したgoogle-service.jsonをアプリに配置します
+    * なお、発行時にAndroidパッケージ名は"mbaas.com.nifcloud.ncmbpushquickstart"としてください
 
-<center><img src="readme-img/FCMAPIkey.png" alt="画像10" width="600px"></center>
+  <center><img src="readme-img/AndroidPackageName.png" alt="画像10" width="600px"></center>
+    
+    * パッケージ名を別名にした場合はアプリ配置後、google-services.jsonファイル内の"package_name"を"mbaas.com.nifcloud.ncmbpushquickstart"に変更してください
+
+<center><img src="readme-img/PlaceGoogleServiceFile.png" alt="画像10" width="600px"></center>
 
 <div style="page-break-before:always"></div>
-
-* `ANDROID_SENDER_ID`の部分を、FCMでプロジェクト作成時に発行された「Sender ID」に書き換えます
- * このとき、ダブルクォーテーション（`"`）を消さないように注意してください！
 
 ### 6. 動作確認
 
@@ -110,12 +123,12 @@ __▼ mobile backendとFCMの連携に必要な設定 ▼__<br>http://mb.cloud.n
 * インストールしたアプリを起動します
  * プッシュ通知の許可を求めるアラートが出たら、必ず許可してください！
 
-<center><img src="readme-img/Action1.png" alt="画像11" width="200px"></center>
+  <center><img src="readme-img/Action1.png" alt="画像11" width="200px"></center>
 
 * 起動されたらこの時点でAndroid端末はレジスタレーションIDが取得されます
-* [ニフティクラウドmobile backend](http://mb.cloud.nifty.com/)のダッシュボードから「データストア (installationクラス(端末情報))」を確認してみましょう！
-
-<center><img src="readme-img/Action2.png" alt="画像12" width="700px"></center>
+* [ニフクラ mobile backend](https://mbaas.nifcloud.com/)のダッシュボードから「データストア (installationクラス(端末情報))」を確認してみましょう！
+  
+  <center><img src="readme-img/Action2.png" alt="画像12" width="700px"></center>
 
 * 端末側で起動したアプリは一度閉じておきます
 
@@ -124,7 +137,7 @@ __▼ mobile backendとFCMの連携に必要な設定 ▼__<br>http://mb.cloud.n
 ### 7. プッシュ通知を送りましょう！
 
 * いよいよです！実際にプッシュ通知を送ってみましょう！
-* ニフティクラウドmobile backendのダッシュボードで「プッシュ通知」＞「＋新しいプッシュ通知」をクリックします
+* ニフクラ mobile backendのダッシュボードで「プッシュ通知」＞「＋新しいプッシュ通知」をクリックします
 * プッシュ通知のフォームが開かれます
 * 必要な項目を入力してプッシュ通知を作成します
 
@@ -145,7 +158,7 @@ __▼ mobile backendとFCMの連携に必要な設定 ▼__<br>http://mb.cloud.n
 サンプルプロジェクトに実装済みの内容のご紹介
 
 #### SDKのインポートと初期設定
-* ニフティクラウドmobile backend の[ドキュメント（クイックスタート）](http://mb.cloud.nifty.com/doc/current/introduction/quickstart_android.html)をご用意していますので、ご活用ください
+* ニフクラ mobile backend の[ドキュメント（クイックスタート）](https://mbaas.nifcloud.com/doc/current/introduction/quickstart_android.html)をご用意していますので、ご活用ください
 
 #### ロジック
 * `activity_main.xml`でデザインを作成し、`MainActivity.java`にロジックを書いています
@@ -155,38 +168,11 @@ __▼ mobile backendとFCMの連携に必要な設定 ▼__<br>http://mb.cloud.n
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     //**************** APIキーの設定とSDKの初期化 **********************
-    NCMB.initialize(this, "YOUR_APPLICATION_KEY", "YOUR_CLIENT_KEY");
-
-    final NCMBInstallation installation = NCMBInstallation.getCurrentInstallation();
-
-    //FCMからRegistrationIdを取得しinstallationに設定する
-    installation.getRegistrationIdInBackground("ANDROID_SENDER_ID", new DoneCallback() {
-        //installation.getRegistrationIdInBackground("senderId", new DoneCallback() {
-            @Override
-        public void done(NCMBException e) {
-            if (e == null) {
-                installation.saveInBackground(new DoneCallback() {
-                    @Override
-                    public void done(NCMBException e) {
-                        if (e == null) {
-                            //保存成功
-                        } else if (NCMBException.DUPLICATE_VALUE.equals(e.getCode())) {
-                            //保存失敗 : registrationID重複
-                            updateInstallation(installation);
-                        } else {
-                            //保存失敗 : その他
-                        }
-                    }
-                });
-            } else {
-                //ID取得失敗
-            }
-        }
-    });
+    NCMB.initialize(this.getApplicationContext(), "YOUR_APPLICATION_KEY", "YOUR_CLIENT_KEY");
 
     setContentView(R.layout.activity_main);
 }
 ```
 
 ## 参考
-* ニフティクラウドmobile backend の[ドキュメント（プッシュ通知（Android）](http://mb.cloud.nifty.com/doc/current/push/basic_usage_android.html)をご用意していますので、ご活用ください
+* ニフクラ mobile backend の[ドキュメント（プッシュ通知（Android）](https://mbaas.nifcloud.com/doc/current/push/basic_usage_android.html)をご用意していますので、ご活用ください

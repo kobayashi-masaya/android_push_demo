@@ -1,4 +1,4 @@
-package mbaas.com.nifty.ncmbpushquickstart;
+package mbaas.com.nifcloud.ncmbpushquickstart;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
