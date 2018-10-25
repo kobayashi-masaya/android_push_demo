@@ -29,6 +29,7 @@
 * Android SDK v3
    * SDK v2系だと動作しないので注意
 
+※このサンプルアプリは、プッシュ通知を受信する必要があるため実機ビルドが必要です
 ※上記内容で動作確認をしています
 
 <div style="page-break-before:always"></div>
