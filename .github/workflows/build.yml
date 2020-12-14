@@ -1,0 +1,33 @@
+
+name: ApplicationBuild
+
+on: [push, pull_request]
+
+env:
+  APPLICATION_KEY: ${{ secrets.APPLICATION_KEY }}
+  CLIENT_KEY: ${{ secrets.CLIENT_KEY }}
+  OUTPUT_PATH: app
+  BUNDLE_ID: "com.ncmb.test"
+  PRODUCT_NAME: ""
+  COMPANY_NAME: ""
+  UNITY_VERSION: 2020.1.8f1
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - name: APPLICATION_KEY Change
+      run: grep -l 'YOUR_APPLICATION_KEY' $(find `pwd` -name "MainActivity.java") | xargs sed -i.bak -e "s/YOUR_APPLICATION_KEY/$APPLICATION_KEY/g"
+    - name: CLIENT_KEY Change
+      run: grep -l 'YOUR_CLIENT_KEY' $(find `pwd` -name "MainActivity.java") | xargs sed -i.bak -e "s/YOUR_CLIENT_KEY/$CLIENT_KEY/g"
+    - name: download google-service.json
+      run: curl -O https://mbaas.api.nifcloud.com/2013-09-01/applications/rJPcKrkr6YNfMmy8/publicFiles/google-services.json
+    - name: Android Build
+      run: |
+        /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity -quit -batchmode -nographics -silent-crashes -logFile \
+          -projectPath ./ -executeMethod MobileBuild.BuildAndroid -buildTarget Android
+    - name: apk save
+      uses: actions/upload-artifact@v2
+      with:
+        name: apk-upload
+        path: ./app.apk
